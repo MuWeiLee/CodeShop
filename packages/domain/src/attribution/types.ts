@@ -29,6 +29,20 @@ export const SERVICE_RECORD_TYPES = [
 
 export type ServiceRecordType = (typeof SERVICE_RECORD_TYPES)[number];
 
+/**
+ * 算作「到店接触」的服务记录类型，用于门店归因窗口。
+ * 导购远程跟进、认领线索、店长转移都不代表顾客到过店，不计入。
+ */
+export const IN_STORE_RECORD_TYPES: readonly ServiceRecordType[] = [
+  'PRODUCT_SCAN',
+  'GUIDE_CODE_SCAN',
+  'GUIDE_CARD_SCAN',
+  'STAFF_ORDER',
+  'APPOINTMENT_RECEPTION',
+  'CALL_RESPONSE',
+  'AUTO_ASSIGN',
+];
+
 export interface ServiceRecord {
   id: string;
   customerId: string;

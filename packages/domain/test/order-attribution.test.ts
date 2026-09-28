@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { attributeOrder, DEFAULT_ATTRIBUTION_RULES, pickAutoAssignee } from '../src/index.js';
+import { attributeOrder, attributeStaffOrder, DEFAULT_ATTRIBUTION_RULES, pickAutoAssignee } from '../src/index.js';
 import { at, binding } from './helpers.js';
 
 const rules = DEFAULT_ATTRIBUTION_RULES;
@@ -129,6 +129,28 @@ describe('attributeOrder（PRD 4.1 判定顺序）', () => {
     expect(() =>
       attributeOrder({ ...base, at: at(1), binding: binding({ merchantId: 'm-B' }), lastStoreTouch: null }),
     ).toThrow();
+  });
+});
+
+describe('attributeStaffOrder（PRD 3.2 导购开单直接归开单导购）', () => {
+  it('归开单导购，依据为扫订单码的服务记录', () => {
+    expect(attributeStaffOrder({ guideId: 'g-2', storeId: 'store-A1', staffOrderRecordId: 'r-so' })).toEqual({
+      kind: 'guide',
+      storeId: 'store-A1',
+      guideId: 'g-2',
+      basisRecordId: 'r-so',
+      commissionEligible: true,
+      ineligibleReason: null,
+    });
+  });
+
+  it('员工本人或同设备 / 同手机号下单不计佣金', () => {
+    expect(
+      attributeStaffOrder({ guideId: 'g', storeId: 's', staffOrderRecordId: 'r', buyerIsMerchantStaff: true }),
+    ).toMatchObject({ commissionEligible: false, ineligibleReason: 'staff_purchase' });
+    expect(
+      attributeStaffOrder({ guideId: 'g', storeId: 's', staffOrderRecordId: 'r', sharesDeviceOrPhoneWithGuide: true }),
+    ).toMatchObject({ commissionEligible: false, ineligibleReason: 'shared_device_or_phone' });
   });
 });
 

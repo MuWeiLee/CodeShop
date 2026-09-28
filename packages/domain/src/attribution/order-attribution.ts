@@ -119,3 +119,29 @@ export function attributeOrder(input: OrderAttributionInput): OrderAttribution {
     ineligibleReason: null,
   };
 }
+
+/**
+ * 导购开单的订单：直接归开单导购（PRD 3.2），不受顾客原有绑定影响。
+ * basisRecordId 是顾客扫订单码时产生的 STAFF_ORDER 服务记录。
+ */
+export function attributeStaffOrder(input: {
+  guideId: string;
+  storeId: string;
+  staffOrderRecordId: string;
+  buyerIsMerchantStaff?: boolean;
+  sharesDeviceOrPhoneWithGuide?: boolean;
+}): Extract<OrderAttribution, { kind: 'guide' }> {
+  const ineligibleReason: CommissionIneligibleReason | null = input.buyerIsMerchantStaff
+    ? 'staff_purchase'
+    : input.sharesDeviceOrPhoneWithGuide
+      ? 'shared_device_or_phone'
+      : null;
+  return {
+    kind: 'guide',
+    storeId: input.storeId,
+    guideId: input.guideId,
+    basisRecordId: input.staffOrderRecordId,
+    commissionEligible: ineligibleReason === null,
+    ineligibleReason,
+  };
+}

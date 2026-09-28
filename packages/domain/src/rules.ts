@@ -64,8 +64,22 @@ export const DEFAULT_GUIDE_COUPON_RULES: Readonly<GuideCouponRules> = deepFreeze
   cardGeofenceMeters: 200,
 });
 
-const isInt = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v);
-const inRange = (v: unknown, min: number, max: number) => isInt(v) && v >= min && v <= max;
+const isInt = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v);const inRange = (v: unknown, min: number, max: number) => isInt(v) && v >= min && v <= max;
+
+/** 金额（分）转成展示用的元，去掉多余的零：50000 → "500"，1250 → "12.5"。 */
+function yuanText(cents: number): string {
+  return String(Number((cents / 100).toFixed(2)));
+}
+
+/** 折扣的中文描述，用于商品页提示和券面，例如「9 折」「满 500 元减 50 元」。 */
+export function describeDiscount(rule: DiscountRule): string {
+  if (rule.kind === 'percent') {
+    const zhe = (100 - rule.percentOff) / 10;
+    const text = `${Number.isInteger(zhe) ? zhe : zhe.toFixed(1)} 折`;
+    return rule.maxOffCents ? `${text}，最多减 ${yuanText(rule.maxOffCents)} 元` : text;
+  }
+  return `满 ${yuanText(rule.thresholdCents)} 元减 ${yuanText(rule.offCents)} 元`;
+}
 
 /** 校验归属规则，返回错误列表；空数组表示合法。 */
 export function validateAttributionRules(rules: AttributionRules): string[] {
