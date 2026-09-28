@@ -1,0 +1,82 @@
+page {
+  background: #f5f5f4;
+  color: #1c1917;
+  font-size: 28px;
+}
+
+.page {
+  padding: 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.muted {
+  color: #78716c;
+  font-size: 24px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0efee;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.tag {
+  font-size: 22px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: #f0efee;
+  color: #57534e;
+  margin-left: 12px;
+}
+
+.tag-accent {
+  background: #e6f1fb;
+  color: #0c447c;
+}
+
+.hint {
+  background: #faeeda;
+  color: #633806;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  display: block;
+}
+
+.error {
+  background: #fcebeb;
+  color: #791f1f;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.primary {
+  margin-top: 24px;
+  background: #1c1917;
+  color: #fff;
+}
+
+.selected {
+  background: #f5f5f4;
+}

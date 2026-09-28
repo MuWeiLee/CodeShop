@@ -14,6 +14,16 @@ describe('商家端', () => {
     await t.close();
   });
 
+  it('门店和商品列表只包含本商家的数据', async () => {
+    const storesRes = await urban().get('/api/merchant/stores');
+    expect(storesRes.body.items.map((s: { id: string }) => s.id).sort()).toEqual([
+      DEMO.stores.jingan,
+      DEMO.stores.xujiahui,
+    ]);
+    const spusRes = await urban().get('/api/merchant/spus');
+    expect(spusRes.body.items.map((s: { id: string }) => s.id).sort()).toEqual([DEMO.spus.tee, DEMO.spus.trench]);
+  });
+
   it('批量生码：新款生成新码，已有码的款返回原码，重复调用结果不变', async () => {
     const first = await urban().post(`/api/merchant/stores/${DEMO.stores.xujiahui}/product-codes`, {
       spuIds: [DEMO.spus.tee, DEMO.spus.trench],
