@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+coverage/
+.turbo/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# 本地开发数据库（PGlite 数据目录）
+.pgdata/
+
+# Taro 小程序构建产物
+apps/*/dist/
+apps/*/.swc/
