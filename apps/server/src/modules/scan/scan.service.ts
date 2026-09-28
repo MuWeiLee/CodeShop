@@ -146,8 +146,10 @@ export class ScanService {
 
   private async scanProduct(customerId: string, codeId: string): Promise<ScanResult> {
     const code = await this.codes.findActive(this.db, codeId, 'product');
+    if (!code.spuId) throw new NotFoundError('商品', 'product_not_found');
+    const spuId = code.spuId;
     const { merchant, store } = await this.merchantAndStore(code.merchantId, code.storeId);
-    const product = await this.catalog.productAtStore(code.merchantId, code.storeId, code.spuId!);
+    const product = await this.catalog.productAtStore(code.merchantId, code.storeId, spuId);
     const now = this.clock.now();
 
     return this.db.transaction(async (tx) => {
@@ -158,7 +160,7 @@ export class ScanService {
         storeId: code.storeId,
         guideId: null,
         type: 'PRODUCT_SCAN',
-        spuId: code.spuId,
+        spuId,
         meta: { codeId: code.id },
         at: now,
       });
@@ -177,7 +179,7 @@ export class ScanService {
             storeId: code.storeId,
             guideId: picked.guideId,
             type: 'AUTO_ASSIGN',
-            spuId: code.spuId,
+            spuId,
             meta: { zone: code.zone },
             at: now,
           });
@@ -313,7 +315,7 @@ export class ScanService {
       throw new NotFoundError('订单码', 'order_code_expired');
     }
     const [guide] = await this.db.select().from(guides).where(eq(guides.id, draft.guideId));
-    if (!guide) throw new NotFoundError('导购', 'guide_not_found');
+    if (!guide || guide.status !== 'active') throw new NotFoundError('导购', 'guide_not_found');
     const { merchant, store } = await this.merchantAndStore(draft.merchantId, draft.storeId);
 
     return this.db.transaction(async (tx) => {
