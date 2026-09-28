@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# pnpm 10 默认不执行依赖的安装脚本，这里放行构建工具需要的几个
+onlyBuiltDependencies:
+  - esbuild
+  - "@swc/core"
